@@ -43,6 +43,13 @@ npm run start
 
 Then head to `localhost:3000` in your browser.
 
+### Images - seem to be hosted sperately from the server at previews.moonrider.xyz
+<https://previews.moonrider.xyz/2588-image.jpg?v=2>
+
+## Dockerizing the Demo
+- docker build . -t traderide:latest
+- docker run -p 3000:3000 traderide  
+
 ### Remixing and Forking
 
 Make this game your own! Some easy ways to mess around:
