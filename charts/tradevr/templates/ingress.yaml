@@ -1,0 +1,43 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "tradevr.fullname" . -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "tradevr.fullname" . }}
+  labels:
+    app: {{ .Values.service.name }}
+{{ include "tradevr.labels" . | indent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-FS-1-2-Res-2020-10
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/success-codes: 200-499
+    alb.ingress.kubernetes.io/target-type: ip
+  {{- if .Values.clusterInfo.niteALBSecurityGroup  }}
+    alb.ingress.kubernetes.io/security-groups: {{ .Values.clusterInfo.niteALBSecurityGroup }}
+  {{- end }}
+  {{- if .Values.clusterInfo.niteWebAclId  }}
+    alb.ingress.kubernetes.io/waf-acl-id: {{ .Values.clusterInfo.niteWebAclId }}
+  {{- end }}
+
+spec:
+  rules:
+    - host: "{{ .Values.ingress.hostPrefix}}.{{ .Values.clusterInfo.clusterDns }}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.service.name }}
+                port:
+                  number: 80
+
+{{- end }}
+

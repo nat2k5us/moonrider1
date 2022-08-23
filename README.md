@@ -36,7 +36,7 @@ Big thanks to @elliottate for helping out with this!
 
 Have Node (< v12, recommended v11) and npm installed.
 
-```
+```bash
 npm install
 npm run start
 ```
@@ -47,8 +47,25 @@ Then head to `localhost:3000` in your browser.
 <https://previews.moonrider.xyz/2588-image.jpg?v=2>
 
 ## Dockerizing the Demo
-- docker build . -t traderide:latest
-- docker run -p 3000:3000 traderide  
+
+- docker build . -t traderide:latest -t nbontha/tradeinvr
+- docker push nbontha/tradeinvr:latest
+- helm upgrade --install trade-in-vr --namespace=nbontha charts/tradevr -f charts/tradevr/values.yaml --set image.tag=latest
+
+<!-- Release "trade-in-vr" does not exist. Installing it now.
+NAME: trade-in-vr
+LAST DEPLOYED: Mon Aug 22 23:25:53 2022
+NAMESPACE: nbontha
+STATUS: deployed
+REVISION: 1
+NOTES:
+
+1. Get the application URL by running these commands: -->
+ ```bash
+  export NODE_PORT=$(kubectl get --namespace nbontha -o jsonpath="{.spec.ports[0].nodePort}" services trade-in-vr-tradevr)
+  export NODE_IP=$(kubectl get nodes --namespace nbontha -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT 
+  ```
 
 ### Remixing and Forking
 
